@@ -5,6 +5,9 @@
 #include <raptordsp/filter/fir/filter_complex.h>
 #include <raptordsp/filter/fir/filter_real.h>
 #include <raptordsp/analog/costas_loop.h>
+#include <raptordsp/analog/agc.h>
+#include <raptordsp/digital/clock_recovery_mm_complex.h>
+#include <raptorrds/debug.h>
 
 #define RDS_SYMBOL_RATE 1187.5f
 
@@ -19,13 +22,11 @@ private:
     rds_demod_handler* handler;
 
 #ifdef RAPTORRDS_DEBUG_OUTPUT
-#include <raptorrds/debug.h>
     raptorrds_debug_sink debug_coarse;
     raptorrds_debug_sink debug_fine;
     raptorrds_debug_sink debug_loop;
+    raptorrds_debug_sink debug_clock;
 #endif
-
-    /* ROTATION */
 
     raptor_complex* buffer;
     size_t buffer_size;
@@ -33,35 +34,13 @@ private:
     raptor_complex ro_rotation;
     raptor_filter_ccc ro_filter_coarse;
     raptor_filter_ccc ro_filter_fine;
+    raptor_agc_complex agc;
     raptor_costas_loop ro_loop;
-
-    /* CLOCK RECOVERY */
-
-    void configure_clock_recovery(float rdsSampleRate);
-    void process_clock_recovery(float* ptr, int count);
-    bool interpolate(float input, float* output);
-
-    raptor_filter_real matched_filter;
-
-    float queue[8];
-    int queue_use;
-    
-    float d_mu;
-    float d_gain_mu;
-    float d_omega;
-    float d_gain_omega;
-    float d_omega_relative_limit;
-    float d_omega_mid;
-    float d_omega_lim;
-    float d_last_sample;
-
-    /* DIFFERENTIAL DECODING */
-
-    void configure_differential_decoding();
-    void process_differential_decoding(float sample);
-
+    raptor_filter_ccf matched_filter;
+    raptor_clock_recovery_mm_complex clock_recovery_mm;
     unsigned char dd_previous;
     unsigned char dd_discard;
-    
+
+    void process_differential_decoding(float sample);
 
 };

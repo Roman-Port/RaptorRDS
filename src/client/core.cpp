@@ -102,10 +102,17 @@ void rds_client::reset() {
 	memset(ps, 0, sizeof(ps));
 	memset(ps_complete, 0, sizeof(ps_complete));
 	ps_set_segments = 0;
+	{
+		rds_event_ps_partial_update_t evt;
+		evt.address = 0;
+		evt.ps = ps;
+		on_ps_partial_update.broadcast(&evt);
+	}
+	{
+		rds_event_ps_complete_update_t evt;
+		evt.ps = ps;
+		on_ps_complete_update.broadcast(&evt);
+	}
 
-	memset(rt, 0, sizeof(rt));
-	memset(rt_complete, 0, sizeof(rt_complete));
-	rt_ab = 0;
-	rt_set_segments = 0;
-	rt_completed = 0;
+	rt_clear();
 }

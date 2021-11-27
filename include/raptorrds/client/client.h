@@ -62,10 +62,10 @@ private:
 public:
 	char rt[RDS_RT_LEN];
 	char rt_complete[RDS_RT_LEN];
-private:
 	rds_event_rt_cleared_dispatcher on_rt_cleared;
 	rds_event_rt_partial_update_dispatcher on_rt_partial_update;
 	rds_event_rt_complete_update_dispatcher on_rt_complete_update;
+private:
 	bool rt_ab;
 	bool rt_completed;
 	uint64_t rt_set_segments;
@@ -74,7 +74,7 @@ private:
 	void process_basic_tuning(rds_frame_t* frame);
 	void process_radiotext(rds_frame_t* frame);
 
-	void rt_clear(bool ab);
+	void rt_clear();
 
 };
 

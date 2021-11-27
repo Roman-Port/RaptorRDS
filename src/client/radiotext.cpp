@@ -26,8 +26,10 @@ void rds_client::process_radiotext(rds_frame_t* frame) {
 	int segAddress = RDS_RADIOTEXT_GET_SEGMENTADDRESS(frame);
 
 	//Clear if needed
-	if (ab != rt_ab)
-		rt_clear(ab);
+	if (ab != rt_ab) {
+		rt_clear();
+		rt_ab = ab;
+	}
 
 	//Read out characters
 	int segLen = (extended ? 4 : 2);
@@ -79,20 +81,32 @@ void rds_client::process_radiotext(rds_frame_t* frame) {
 #endif
 }
 
-void rds_client::rt_clear(bool ab) {
-	//Set
-	rt_ab = ab;
+void rds_client::rt_clear() {
+	//Clear
+	memset(rt, 0, sizeof(rt));
+	memset(rt_complete, 0, sizeof(rt_complete));
+	rt_ab = 0;
 	rt_set_segments = 0;
 	rt_completed = 0;
 
-	//Clear
-	for (int i = 0; i < RDS_RT_LEN - 1; i++)
-		rt[i] = ' ';
-
-	//Send event
-	rds_event_rt_cleared_t evt;
-	evt.ab = ab;
-	on_rt_cleared.broadcast(&evt);
+	//Send events
+	{
+		rds_event_rt_cleared_t evt;
+		evt.ab = 0;
+		on_rt_cleared.broadcast(&evt);
+	}
+	{
+		rds_event_rt_partial_update_t evt;
+		evt.address = 0;
+		evt.rt = rt;
+		evt.updated = 0;
+		on_rt_partial_update.broadcast(&evt);
+	}
+	{
+		rds_event_rt_complete_update_t evt;
+		evt.rt = rt;
+		on_rt_complete_update.broadcast(&evt);
+	}
 
 	//Log
 #ifdef RDS_DEBUG_LOG
