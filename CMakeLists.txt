@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.8)
 project ("raptorrds")
 
+find_package(volk CONFIG REQUIRED)
+
 option(RAPTORRDS_DEBUG_OUTPUT "Debug setting to output intermediary files." OFF)
 
 if (RAPTORRDS_DEBUG_OUTPUT)
