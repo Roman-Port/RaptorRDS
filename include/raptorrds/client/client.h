@@ -40,6 +40,8 @@ public:
 	virtual void push_frame(rds_frame_t frame) override;
 	void reset();
 
+	static char* make_safe_string(const char* input, int len);
+
 	uint16_t picode;
 	uint8_t pty;
 	bool has_sync;
@@ -77,5 +79,3 @@ private:
 	void rt_clear();
 
 };
-
-char* rds_client_make_logging_safe_string(const char* input, int len);

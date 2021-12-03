@@ -4,7 +4,7 @@
 #include "settings.h"
 #include <cassert>
 
-char* rds_client_make_logging_safe_string(const char* input, int len) {
+char* rds_client::make_safe_string(const char* input, int len) {
 	//Allocate space for this, plus the null terminator
 	char* buffer = (char*)malloc(sizeof(char) * (len + 1));
 	assert(buffer != 0);

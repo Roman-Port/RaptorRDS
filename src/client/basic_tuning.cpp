@@ -44,7 +44,7 @@ void rds_client::process_basic_tuning(rds_frame_t* frame) {
 
 	//Log
 #ifdef RDS_DEBUG_LOG
-	char* safe = rds_client_make_logging_safe_string(ps, RDS_PS_LEN);
+	char* safe = rds_client::make_safe_string(ps, RDS_PS_LEN);
 	printf("[RDS-SET-PS] (%c%c) @ %i -> [%s] %s\n", ps[addr + 0], ps[addr + 1], addr, safe, complete ? "COMPLETE" : "");
 	free(safe);
 #endif
