@@ -67,14 +67,14 @@ void rds_client::process_radiotext(rds_frame_t* frame) {
 
 		//Send event
 		rds_event_rt_complete_update_t evt;
-		evt.rt = ps_complete;
+		evt.rt = rt_complete;
 		on_rt_complete_update.broadcast(&evt);
 	}
 
 	//Log
 #ifdef RDS_DEBUG_LOG
-	char* safeSrc = rds_client_make_logging_safe_string(buffer, segLen);
-	char* safeRt = rds_client_make_logging_safe_string(rt, RDS_RT_LEN);
+	char* safeSrc = rds_client::make_safe_string(buffer, segLen);
+	char* safeRt = rds_client::make_safe_string(rt, RDS_RT_LEN);
 	printf("[RDS-SET-RT] (%s) @ %02i -> [%s] %s\n", safeSrc, addr, safeRt, complete ? "COMPLETE" : "");
 	free(safeSrc);
 	free(safeRt);
