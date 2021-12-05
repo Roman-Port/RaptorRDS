@@ -8,13 +8,12 @@
 #define RDS_RT_LEN 64
 
 #define RDS_EVENT_DISPATCHER_MAX_CLIENTS 4
-#define DECLARE_RDS_EVENT(name, ...) \
-	struct rds_event_##name##_t { __VA_ARGS__ }; \
-	class rds_event_##name##_handler { public: virtual void handle_rds_##name##(rds_event_##name##_t* evt) = 0;}; \
+#define DECLARE_RDS_EVENT(name) \
+	class rds_event_##name##_handler { public: virtual void handle_rds_##name (rds_event_##name##_t* evt) = 0;}; \
 	class rds_event_##name##_dispatcher { \
 	public:\
 		rds_event_##name##_dispatcher() {for (int i = 0; i < RDS_EVENT_DISPATCHER_MAX_CLIENTS; i++) { bound[i] = 0; }} \
-		void broadcast(rds_event_##name##_t* evt) { for (int i = 0; i < RDS_EVENT_DISPATCHER_MAX_CLIENTS; i++) { if(bound[i] != 0) { bound[i]->handle_rds_##name##(evt); } } } \
+		void broadcast(rds_event_##name##_t* evt) { for (int i = 0; i < RDS_EVENT_DISPATCHER_MAX_CLIENTS; i++) { if(bound[i] != 0) { bound[i]->handle_rds_##name (evt); } } } \
 		bool bind(rds_event_##name##_handler* handler) { for (int i = 0; i < RDS_EVENT_DISPATCHER_MAX_CLIENTS; i++) { if(bound[i] == 0) { bound[i] = handler; return true; } } return false; } \
 		bool unbind(rds_event_##name##_handler* handler) { bool found = false; for (int i = 0; i < RDS_EVENT_DISPATCHER_MAX_CLIENTS; i++) { if(bound[i] == handler) { bound[i] = 0; found = true; } } return found; } \
 	private:\
@@ -22,15 +21,54 @@
 	\
 	};
 
-DECLARE_RDS_EVENT(frame, rds_frame_t* frame;)
-DECLARE_RDS_EVENT(sync_changed, bool sync;)
-DECLARE_RDS_EVENT(picode_update, uint16_t picode;)
-DECLARE_RDS_EVENT(pty_update, uint8_t pty;)
-DECLARE_RDS_EVENT(ps_partial_update, const char* ps; int address;)
-DECLARE_RDS_EVENT(ps_complete_update, const char* ps;)
-DECLARE_RDS_EVENT(rt_cleared, bool ab;)
-DECLARE_RDS_EVENT(rt_partial_update, const char* rt; int address; int updated;)
-DECLARE_RDS_EVENT(rt_complete_update, const char* rt;)
+struct rds_event_frame_t {
+	rds_frame_t* frame;
+};
+
+struct rds_event_sync_changed_t {
+	bool sync;
+};
+
+struct rds_event_picode_update_t {
+	uint16_t picode;
+};
+
+struct rds_event_pty_update_t {
+	uint8_t pty;
+};
+
+struct rds_event_ps_partial_update_t {
+	const char* ps;
+	int address;
+};
+
+struct rds_event_ps_complete_update_t {
+	const char* ps;
+};
+
+struct rds_event_rt_cleared_t {
+	bool ab;
+};
+
+struct rds_event_rt_partial_update_t {
+	const char* rt;
+	int address;
+	int updated;
+};
+
+struct rds_event_rt_complete_update_t {
+	const char* rt;
+};
+
+DECLARE_RDS_EVENT(frame)
+DECLARE_RDS_EVENT(sync_changed)
+DECLARE_RDS_EVENT(picode_update)
+DECLARE_RDS_EVENT(pty_update)
+DECLARE_RDS_EVENT(ps_partial_update)
+DECLARE_RDS_EVENT(ps_complete_update)
+DECLARE_RDS_EVENT(rt_cleared)
+DECLARE_RDS_EVENT(rt_partial_update)
+DECLARE_RDS_EVENT(rt_complete_update)
 
 class rds_client : public rds_sync_handler {
 
