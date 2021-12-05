@@ -35,7 +35,6 @@ write_basic_package_version_file(
 
 export(EXPORT ${installhelper_name}Targets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/${installhelper_name}/${installhelper_name}Targets.cmake"
-  NAMESPACE Upstream::
 )
 configure_file(cmake/${installhelper_name}Config.cmake
   "${CMAKE_CURRENT_BINARY_DIR}/${installhelper_name}/${installhelper_name}Config.cmake"
@@ -46,8 +45,6 @@ set(ConfigPackageLocation lib/cmake/${installhelper_name})
 install(EXPORT ${installhelper_name}Targets
   FILE
     ${installhelper_name}Targets.cmake
-  NAMESPACE
-    Upstream::
   DESTINATION
     ${ConfigPackageLocation}
 )

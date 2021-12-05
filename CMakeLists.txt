@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.8)
 project ("raptorrds")
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 find_package(volk CONFIG REQUIRED)
 find_package(raptordsp CONFIG REQUIRED)
